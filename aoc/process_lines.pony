@@ -2,7 +2,7 @@
 use "files"
 use "ponytest"
 
-primitive Process[T: Any #share]
+primitive ProcessLines[T: Any #share]
   fun apply(h: TestHelper, fname: String, loop: Bool, initial: T,
     proc: {(T, String iso): (T, Bool)}) : T
   =>
@@ -33,7 +33,7 @@ primitive ProcessI64[T: Any #share]
   fun apply(h: TestHelper, fname: String, loop: Bool, initial: T,
     proc: {(T, I64): (T, Bool)}) : T
   =>
-    Process[T](h, fname, loop, initial,
+    ProcessLines[T](h, fname, loop, initial,
       {(cur: T, line: String iso): (T, Bool) =>
         if line.size() > 0 then
           line.lstrip("+")

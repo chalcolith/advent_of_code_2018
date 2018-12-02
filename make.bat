@@ -1,5 +1,5 @@
 @echo off
-set TARGET=src
+set TARGET=aoc
 
 if "%1"=="help" goto usage
 if "%1"=="--help" goto usage
@@ -71,13 +71,13 @@ if errorlevel 1 goto error
 goto done
 
 :test
-if not exist %BUILDDIR%\src.exe (
+if not exist %BUILDDIR%\%TARGET%.exe (
   echo stable env ponyc %DEBUG% -o %BUILDDIR% %TARGET%
   stable env ponyc %DEBUG% -o %BUILDDIR% %TARGET%
 )
 if errorlevel 1 goto error
-echo %BUILDDIR%\src.exe --sequential
-%BUILDDIR%\src.exe --sequential
+echo %BUILDDIR%\%TARGET%.exe --sequential
+%BUILDDIR%\%TARGET%.exe --sequential
 if errorlevel 1 goto error
 goto done
 
