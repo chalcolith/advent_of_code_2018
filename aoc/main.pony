@@ -7,5 +7,7 @@ actor Main is TestList
     PonyTest(env, this)
 
   fun tag tests(test: PonyTest) =>
-    test(_Day01Step01("data/day_01_01.txt"))
-    test(_Day01Step02("data/day_01_01.txt"))
+    test(_Day01Step01("data/day_01.txt"))
+    test(_Day01Step02("data/day_01.txt"))
+    test(_Day02Step01("data/day_02.txt"))
+    test(_Day02Step02("data/day_02.txt"))
