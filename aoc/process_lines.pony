@@ -8,7 +8,7 @@ primitive ProcessLines[T: Any #share]
   =>
     var cur = initial
     try
-      let path = FilePath(h.env.root as AmbientAuth, fname) ?
+      let path = FilePath(h.env.root as AmbientAuth, fname)?
       repeat
         match OpenFile(path)
         | let file: File =>
@@ -22,6 +22,7 @@ primitive ProcessLines[T: Any #share]
           file.dispose()
         else
           h.fail("error opening file " + fname)
+          break
         end
       until not loop end
     else
