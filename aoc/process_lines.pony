@@ -30,7 +30,7 @@ primitive ProcessLines[T: Any #share]
     end
     cur
 
-primitive ProcessI64[T: Any #send]
+primitive ProcessI64[T: Any #share]
   fun apply(h: TestHelper, fname: String, loop: Bool, initial: T,
     proc: {(T, I64): (T, Bool)}) : T
   =>
