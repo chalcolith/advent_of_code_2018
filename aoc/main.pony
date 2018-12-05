@@ -14,3 +14,4 @@ actor Main is TestList
     test(_Day03Step01("data/day_03.txt"))
     test(_Day03Step02("data/day_03.txt"))
     test(_Day04Step01("data/day_04.txt"))
+    test(_Day04Step02("data/day_04.txt"))
