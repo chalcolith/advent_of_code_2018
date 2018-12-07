@@ -10,16 +10,16 @@ type _Day06Row is Array[_Day06DistList]
 type _Day06Grid is Array[_Day06Row]
 
 class _Day06Rec
-  let x: USize
-  let y: USize
-  let w: USize
-  let h: USize
+  let x: ISize
+  let y: ISize
+  let w: ISize
+  let h: ISize
 
-  let coords: Array[(USize, USize)]
+  let coords: Array[(ISize, ISize)]
   let grid: _Day06Grid
 
-  new create(x': USize, y': USize, w': USize, h': USize,
-    coords': Array[(USize, USize)], grid': _Day06Grid)
+  new create(x': ISize, y': ISize, w': ISize, h': ISize,
+    coords': Array[(ISize, ISize)], grid': _Day06Grid)
   =>
     x = x'
     y = y'
@@ -47,11 +47,11 @@ class _Day06Dist is Comparable[_Day06Dist box]
 primitive _Day06Data
   fun get_data(h: TestHelper, fname: String): _Day06Rec ? =>
     try
-      let coords = Array[(USize, USize)]
-      var min_x = USize.max_value()
-      var max_x = USize(0)
-      var min_y = USize.max_value()
-      var max_y = USize(0)
+      let coords = Array[(ISize, ISize)]
+      var min_x = ISize.max_value()
+      var max_x = ISize.min_value()
+      var min_y = ISize.max_value()
+      var max_y = ISize.min_value()
 
       let regex = recover val Regex("(\\d+),\\s*(\\d+)")? end
       let path = FilePath(h.env.root as AmbientAuth, fname)?
@@ -59,8 +59,8 @@ primitive _Day06Data
       | let file: File =>
         for line in FileLines(file) do
           let m = regex(consume line)?
-          let x = m(1)?.usize()?
-          let y = m(2)?.usize()?
+          let x = m(1)?.isize()?
+          let y = m(2)?.isize()?
 
           if x < min_x then min_x = x end
           if x > max_x then max_x = x end
@@ -77,16 +77,17 @@ primitive _Day06Data
       let width = (max_x - min_x) + 1
       let height = (max_y - min_y) + 1
 
-      let rows = _Day06Grid(height)
-      for i in Range(0, height) do
-        let row = _Day06Row(width)
-        for j in Range(0, width) do
+      let rows = _Day06Grid(height.usize() * 3)
+      for i in Range[ISize](0, height * 3) do
+        let row = _Day06Row(width.usize() * 3)
+        for j in Range[ISize](0, width * 3) do
           row.push(_Day06DistList)
         end
         rows.push(row)
       end
 
-      _Day06Rec(min_x, min_y, width, height, coords, rows)
+      _Day06Rec(min_x - width, min_y - height,
+        width * 3, height * 3, coords, rows)
     else
       h.fail("failed to read file " + fname)
       error
@@ -99,8 +100,7 @@ primitive _Day06Data
           let cx = coord._1 - rec.x
           let cy = coord._2 - rec.y
 
-          let distance = (cx.isize() - x.isize()).abs()
-            + (cy.isize() - y.isize()).abs()
+          let distance = (cx - x.isize()).abs() + (cy - y.isize()).abs()
           dl.push(_Day06Dist(distance, i))
         end
       end
@@ -126,13 +126,41 @@ class iso _Day06Step01 is UnitTest
       let data = _Day06Data.get_data(h, _input_fname)?
       _Day06Data.populate_distances(data)
 
+      let edge_coords = Set[USize]
+      for x in Range(0, data.w.usize()) do
+        let dl = data.grid(0)?(x)?
+        if dl(0)?.dist != dl(1)?.dist then
+          edge_coords.set(dl(0)?.coord)
+        end
+      end
+      for x in Range(0, data.w.usize()) do
+        let dl = data.grid(data.h.usize() - 1)?(x)?
+        if dl(0)?.dist != dl(1)?.dist then
+          edge_coords.set(dl(0)?.coord)
+        end
+      end
+      for y in Range(0, data.h.usize()) do
+        let dl = data.grid(y)?(0)?
+        if dl(0)?.dist != dl(1)?.dist then
+          edge_coords.set(dl(0)?.coord)
+        end
+      end
+      for y in Range(0, data.h.usize()) do
+        let dl = data.grid(y)?(data.w.usize() - 1)?
+        if dl(0)?.dist != dl(1)?.dist then
+          edge_coords.set(dl(0)?.coord)
+        end
+      end
+
       let coord_counts = Map[USize, USize]
-      for y in Range(1, data.h - 1) do // ignore edges
+      for y in Range(1, data.h.usize() - 1) do // ignore edges
         let row = data.grid(y)?
-        for x in Range(1, data.w - 1) do
+        for x in Range(1, data.w.usize() - 1) do
           let dl = row(x)?
           let closest = dl(0)?
-          if closest.dist < dl(1)?.dist then
+          if (closest.dist != dl(1)?.dist)
+            and (not edge_coords.contains(dl(0)?.coord))
+          then
             let count = coord_counts.get_or_else(closest.coord, 0)
             coord_counts(closest.coord) = count + 1
           end
