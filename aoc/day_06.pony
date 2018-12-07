@@ -45,7 +45,7 @@ class _Day06Dist is Comparable[_Day06Dist box]
 
 
 primitive _Day06Data
-  fun get_data(h: TestHelper, fname: String): _Day06Rec ? =>
+  fun get_data(h: TestHelper, fname: String, margin: USize): _Day06Rec ? =>
     try
       let coords = Array[(ISize, ISize)]
       var min_x = ISize.max_value()
@@ -74,20 +74,20 @@ primitive _Day06Data
         error
       end
 
-      let width = (max_x - min_x) + 1
-      let height = (max_y - min_y) + 1
+      let width = (max_x - min_x) + (margin.isize() * 2)
+      let height = (max_y - min_y) + (margin.isize() * 2)
 
-      let rows = _Day06Grid(height.usize() * 3)
-      for i in Range[ISize](0, height * 3) do
-        let row = _Day06Row(width.usize() * 3)
-        for j in Range[ISize](0, width * 3) do
+      let rows = _Day06Grid(height.usize())
+      for i in Range[ISize](0, height) do
+        let row = _Day06Row(width.usize())
+        for j in Range[ISize](0, width) do
           row.push(_Day06DistList)
         end
         rows.push(row)
       end
 
-      _Day06Rec(min_x - width, min_y - height,
-        width * 3, height * 3, coords, rows)
+      _Day06Rec(min_x - margin.isize(), min_y - margin.isize(),
+        width, height, coords, rows)
     else
       h.fail("failed to read file " + fname)
       error
@@ -123,7 +123,7 @@ class iso _Day06Step01 is UnitTest
 
   fun apply(h: TestHelper) =>
     try
-      let data = _Day06Data.get_data(h, _input_fname)?
+      let data = _Day06Data.get_data(h, _input_fname, 0)?
       _Day06Data.populate_distances(data)
 
       let edge_coords = Set[USize]
@@ -185,7 +185,7 @@ class iso _Day06Step01 is UnitTest
         if count > best_count then best_count = count end
       end
 
-      h.assert_eq[USize](0, best_count)
+      h.assert_eq[USize](3223, best_count)
     else
       h.fail()
     end
