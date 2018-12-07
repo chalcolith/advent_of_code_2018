@@ -189,3 +189,35 @@ class iso _Day06Step01 is UnitTest
     else
       h.fail()
     end
+
+
+class iso _Day06Step02 is UnitTest
+  let _input_fname: String
+
+  new iso create(input_fname: String) =>
+    _input_fname = input_fname
+
+  fun name(): String => "Day_06_Step_02"
+
+  fun apply(h: TestHelper) =>
+    try
+      let data = _Day06Data.get_data(h, _input_fname, 0)?
+      _Day06Data.populate_distances(data)
+
+      var num_in_region = USize(0)
+      for row in data.grid.values() do
+        for dl in row.values() do
+          var sum = USize(0)
+          for cd in dl.values() do
+            sum = sum + cd.dist
+          end
+          if sum < 10_000 then
+            num_in_region = num_in_region + 1
+          end
+        end
+      end
+
+      h.assert_eq[USize](40495, num_in_region)
+    else
+      h.fail()
+    end
