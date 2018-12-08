@@ -70,25 +70,34 @@ class iso _Day07Step01 is UnitTest
         end
       end
 
-      //
       let order =
         recover val
           let order' = Array[U8](steps.size())
 
           let queue = MinHeap[U8](steps.size())
           queue.push(first_step)
-
           while queue.size() > 0 do
-            let next = queue.pop()?
-            order'.push(next)
-
-            if subsequents.contains(next) then
-              for second in subsequents(next)?.values() do
-                if Iter[U8](antecedents(second)?.values()).all({(a) => order'.contains(a)}) then
-                  queue.push(second)
+            let not_ready = Array[U8]
+            while queue.size() > 0 do
+              let step = queue.pop()?
+              if (not antecedents.contains(step)) or
+                Iter[U8](antecedents(step)?.values())
+                  .all({(s) => order'.contains(s) })
+              then
+                if not order'.contains(step) then
+                  order'.push(step)
                 end
+                if subsequents.contains(step) then
+                  for sub in subsequents(step)?.values() do
+                    queue.push(sub)
+                  end
+                end
+                break
+              else
+                not_ready.push(step)
               end
             end
+            queue.append(not_ready)
           end
 
           order'
