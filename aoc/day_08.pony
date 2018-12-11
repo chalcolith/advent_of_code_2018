@@ -21,6 +21,23 @@ class val _Day08Node
     end
     f(t', this)
 
+  fun val get_value(): ISize =>
+    if children.size() == 0 then
+      Iter[ISize](metadata.values()).fold[ISize](0, {(sum, n) => sum + n })
+    else
+      Iter[ISize](metadata.values()).fold[ISize](0, {(sum, i): ISize =>
+        if i > 0 then
+          let idx: USize = (i - 1).usize()
+          if idx < children.size() then
+            try
+              return sum + children(idx)?.get_value()
+            end
+          end
+        end
+        sum
+      })
+    end
+
 
 primitive _Day08Data
   fun apply(h: TestHelper, fname: String): _Day08Node ? =>
@@ -88,6 +105,25 @@ class iso _Day08Step01 is UnitTest
       })
 
       h.assert_eq[ISize](49426, sum)
+    else
+      h.fail()
+    end
+
+
+class iso _Day08Step02 is UnitTest
+  let _input_fname: String
+
+  new iso create(input_fname: String) =>
+    _input_fname = input_fname
+
+  fun name(): String => "Day_08_Step_02"
+
+  fun apply(h: TestHelper) =>
+    try
+      let tree = _Day08Data(h, _input_fname)?
+      let value = tree.get_value()
+
+      h.assert_eq[ISize](40688, value)
     else
       h.fail()
     end
