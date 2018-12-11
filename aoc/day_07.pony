@@ -197,7 +197,7 @@ class iso _Day07Step02 is UnitTest
         end
       end
 
-      h.assert_eq[USize](0, seconds)
+      h.assert_eq[USize](869, seconds)
     else
       h.fail()
     end
