@@ -27,7 +27,7 @@ primitive _GetMap
     let regex = recover val
       Regex("#(\\d+)\\s+@\\s+(\\d+),(\\d+):\\s+(\\d+)x(\\d+)")?
     end
-    ProcessLines[(per.Vec[_Patch], per.Map[USize, USize])](
+    _ProcessLines[(per.Vec[_Patch], per.Map[USize, USize])](
       h, fname, false, (per.Vec[_Patch], per.Map[USize, USize]),
       {(cur, line) =>
         match cur

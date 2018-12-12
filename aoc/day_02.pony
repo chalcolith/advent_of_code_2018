@@ -13,7 +13,7 @@ class iso _Day02Step01 is UnitTest
   fun name(): String => "Day_02_Step_01"
 
   fun apply(h: TestHelper) =>
-    (let num2: I64, let num3: I64) = ProcessLines[(I64, I64)](
+    (let num2: I64, let num3: I64) = _ProcessLines[(I64, I64)](
       h, _input_fname, false, (0, 0), {(cur, line) =>
         match cur
         | (let n2: I64, let n3: I64) =>
